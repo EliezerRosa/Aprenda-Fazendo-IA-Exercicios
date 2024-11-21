@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor HTML/CSS/JS com Calculadora e Layout Dinâmico</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+    .container {
+      display: flex;
+      flex: 1;
+      gap: 10px;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      resize: horizontal;
+      overflow: auto;
+    }
+    iframe {
+      flex: 1;
+      border: 1px solid #ccc;
+    }
+    textarea {
+      flex: 1;
+      resize: none;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Editor HTML, CSS, JavaScript - Código Exemplo</h1>
+  </header>
+  <div class="container">
+    <!-- HTML Editor -->
+    <div class="editor">
+      <h3>HTML</h3>
+      <textarea id="html-editor"></textarea>
+    </div>
+    <!-- CSS Editor -->
+    <div class="editor">
+      <h3>CSS</h3>
+      <textarea id="css-editor"></textarea>
+    </div>
+    <!-- JS Editor -->
+    <div class="editor">
+      <h3>JavaScript</h3>
+      <textarea id="js-editor"></textarea>
+    </div>
+  </div>
+  <div class="container">
+    <!-- Output Iframe -->
+    <iframe id="output" title="Output"></iframe>
+  </div>
+  <button onclick="runCode()">Executar Código</button>
+  
+  <!-- Novo botão para abrir o ChatGPT -->
+  <button onclick="openChatGPT()">Abrir ChatGPT</button>
+
+  <!-- CodeMirror -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/javascript/javascript.min.js"></script>
+
+  <script>
+    // Configurando CodeMirror
+    const htmlEditor = CodeMirror.fromTextArea(document.getElementById('html-editor'), {
+      mode: 'xml',
+      lineNumbers: true,
+      theme: 'default',
+    });
+
+    const cssEditor = CodeMirror.fromTextArea(document.getElementById('css-editor'), {
+      mode: 'css',
+      lineNumbers: true,
+      theme: 'default',
+    });
+
+    const jsEditor = CodeMirror.fromTextArea(document.getElementById('js-editor'), {
+      mode: 'javascript',
+      lineNumbers: true,
+      theme: 'default',
+    });
+
+    // Código inicial para o exemplo da calculadora
+    const initialHTML = `
+      <div class="container">
+        <h1>Calculadora</h1>
+        <input type="number" id="num1" placeholder="Digite o primeiro número">
+        <input type="number" id="num2" placeholder="Digite o segundo número">
+        <button onclick="somar()">Somar</button>
+        <p id="resultado"></p>
+      </div>
+    `;
+    const initialCSS = `
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      input, button {
+        margin: 10px;
+        padding: 10px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+    `;
+    const initialJS = `
+      function somar() {
+        const num1 = parseFloat(document.getElementById('num1').value);
+        const num2 = parseFloat(document.getElementById('num2').value);
+        const resultado = num1 + num2;
+
+        if (isNaN(resultado)) {
+          document.getElementById('resultado').innerText = 'Insira números válidos.';
+        } else {
+          document.getElementById('resultado').innerText = 'Resultado: ' + resultado;
+        }
+      }
+    `;
+
+    // Inserir o exemplo padrão no editor
+    htmlEditor.setValue(initialHTML);
+    cssEditor.setValue(initialCSS);
+    jsEditor.setValue(initialJS);
+
+    // Função para executar o código
+    function runCode() {
+      const html = htmlEditor.getValue();
+      const css = cssEditor.getValue();
+      const js = jsEditor.getValue();
+
+      const output = document.getElementById('output').contentWindow.document;
+      output.open();
+      output.write(`
+        <style>${css}</style>
+        ${html}
+        <script>${js}<\/script>
+      `);
+      output.close();
+    }
+
+    // Função para abrir o ChatGPT e ajustar janelas
+    function openChatGPT() {
+  	const screenWidth = window.screen.width;
+  	const screenHeight = window.screen.height;
+
+  	// Ajusta a janela atual para ocupar 3/4 da largura, posicionada à esquerda
+  	window.resizeTo((3 / 4) * screenWidth, screenHeight); // Redimensiona a janela atual
+  	window.moveTo(0, 0); // Move a janela atual para o canto superior esquerdo
+
+  	// Abre a nova janela do ChatGPT com 1/4 da largura, posicionada à direita
+ 	window.open(
+    		'https://chat.openai.com/',
+    		'ChatGPT',
+    		`width=${screenWidth / 4},height=${screenHeight},left=${(3 / 4) * screenWidth},top=0`
+  	);
+    }
+
+
+  </script>
+</body>
+</html>
