@@ -32,12 +32,10 @@
       flex-direction: column;
       resize: horizontal;
       overflow: auto;
-      transition: all 0.3s ease; /* Transição suave para o redimensionamento */
     }
     iframe {
       flex: 1;
       border: 1px solid #ccc;
-      transition: all 0.3s ease; /* Transição suave para o redimensionamento */
     }
     textarea {
       flex: 1;
@@ -63,26 +61,24 @@
   </header>
   <div class="container">
     <!-- HTML Editor -->
-    <div class="editor" id="html-container">
+    <div class="editor">
       <h3>HTML</h3>
       <textarea id="html-editor"></textarea>
     </div>
     <!-- CSS Editor -->
-    <div class="editor" id="css-container">
+    <div class="editor">
       <h3>CSS</h3>
       <textarea id="css-editor"></textarea>
     </div>
     <!-- JS Editor -->
-    <div class="editor" id="js-container">
+    <div class="editor">
       <h3>JavaScript</h3>
       <textarea id="js-editor"></textarea>
     </div>
   </div>
   <div class="container">
     <!-- Output Iframe -->
-    <div class="editor" id="output-container">
-      <iframe id="output" title="Output"></iframe>
-    </div>
+    <iframe id="output" title="Output"></iframe>
   </div>
   <button onclick="runCode()">Executar Código</button>
   
@@ -115,6 +111,52 @@
       theme: 'default',
     });
 
+    // Código inicial para o exemplo da calculadora
+    const initialHTML = `
+      <div class="container">
+        <h1>Calculadora</h1>
+        <input type="number" id="num1" placeholder="Digite o primeiro número">
+        <input type="number" id="num2" placeholder="Digite o segundo número">
+        <button onclick="somar()">Somar</button>
+        <p id="resultado"></p>
+      </div>
+    `;
+    const initialCSS = `
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      input, button {
+        margin: 10px;
+        padding: 10px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+    `;
+    const initialJS = `
+      function somar() {
+        const num1 = parseFloat(document.getElementById('num1').value);
+        const num2 = parseFloat(document.getElementById('num2').value);
+        const resultado = num1 + num2;
+
+        if (isNaN(resultado)) {
+          document.getElementById('resultado').innerText = 'Insira números válidos.';
+        } else {
+          document.getElementById('resultado').innerText = 'Resultado: ' + resultado;
+        }
+      }
+    `;
+
+    // Inserir o exemplo padrão no editor
+    htmlEditor.setValue(initialHTML);
+    cssEditor.setValue(initialCSS);
+    jsEditor.setValue(initialJS);
+
     // Função para executar o código
     function runCode() {
       const html = htmlEditor.getValue();
@@ -131,49 +173,24 @@
       output.close();
     }
 
-    // Função para maximizar e restaurar o container
-    function toggleMaximize(container) {
-      const isMaximized = container.style.flex === '100%'; // Verifica se já está maximizado
-      if (isMaximized) {
-        container.style.flex = '1'; // Restaura ao tamanho original
-      } else {
-        container.style.flex = '100%'; // Maximiza o container
-      }
-    }
-
-    // Evento de duplo clique para maximizar/restaurar os containers
-    document.getElementById('html-container').ondblclick = function() {
-      toggleMaximize(this);
-    };
-
-    document.getElementById('css-container').ondblclick = function() {
-      toggleMaximize(this);
-    };
-
-    document.getElementById('js-container').ondblclick = function() {
-      toggleMaximize(this);
-    };
-
-    document.getElementById('output-container').ondblclick = function() {
-      toggleMaximize(this);
-    };
-
     // Função para abrir o ChatGPT e ajustar janelas
     function openChatGPT() {
-      const screenWidth = window.screen.width;
-      const screenHeight = window.screen.height;
+  	const screenWidth = window.screen.width;
+  	const screenHeight = window.screen.height;
 
-      // Ajusta a janela atual para ocupar 3/4 da largura, posicionada à esquerda
-      window.resizeTo((3 / 4) * screenWidth, screenHeight); // Redimensiona a janela atual
-      window.moveTo(0, 0); // Move a janela atual para o canto superior esquerdo
+  	// Ajusta a janela atual para ocupar 3/4 da largura, posicionada à esquerda
+  	window.resizeTo((3 / 4) * screenWidth, screenHeight); // Redimensiona a janela atual
+  	window.moveTo(0, 0); // Move a janela atual para o canto superior esquerdo
 
-      // Abre a nova janela do ChatGPT com 1/4 da largura, posicionada à direita
-      window.open(
-        'https://chat.openai.com/',
-        'ChatGPT',
-        `width=${screenWidth / 4},height=${screenHeight},left=${(3 / 4) * screenWidth},top=0`
-      );
+  	// Abre a nova janela do ChatGPT com 1/4 da largura, posicionada à direita
+ 	window.open(
+    		'https://chat.openai.com/',
+    		'ChatGPT',
+    		`width=${screenWidth / 4},height=${screenHeight},left=${(3 / 4) * screenWidth},top=0`
+  	);
     }
+
+
   </script>
 </body>
 </html>
