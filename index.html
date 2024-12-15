@@ -26,17 +26,26 @@
       padding: 10px;
       overflow: hidden;
     }
-    .editor {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      resize: horizontal;
-      overflow: auto;
-    }
-    iframe {
-      flex: 1;
-      border: 1px solid #ccc;
-    }
+   .editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .editor .resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: #007bff;
+    cursor: nwse-resize;
+  }
+  iframe {
+    flex: 1;
+    border: 1px solid #ccc;
+    min-height: 200px; /* Para garantir que o iframe tenha um mínimo de espaço */
+  }
     textarea {
       flex: 1;
       resize: none;
@@ -62,19 +71,25 @@
   <div class="container">
     <!-- HTML Editor -->
     <div class="editor">
-      <h3>HTML</h3>
-      <textarea id="html-editor"></textarea>
-    </div>
+  	<h3>HTML</h3>
+  	<textarea id="html-editor"></textarea>
+  	<div class="resize-handle"></div>
+	</div>
+
     <!-- CSS Editor -->
     <div class="editor">
       <h3>CSS</h3>
       <textarea id="css-editor"></textarea>
+	<div class="resize-handle"></div>
     </div>
+
     <!-- JS Editor -->
     <div class="editor">
       <h3>JavaScript</h3>
       <textarea id="js-editor"></textarea>
+	<div class="resize-handle"></div>
     </div>
+
   </div>
   <div class="container">
     <!-- Output Iframe -->
@@ -189,8 +204,66 @@
     		`width=${screenWidth / 4},height=${screenHeight},left=${(3 / 4) * screenWidth},top=0`
   	);
     }
+// Função para redimensionar
+function resizeEditor(event, editor) {
+  const startX = event.clientX;
+  const startY = event.clientY;
+  const startWidth = parseInt(document.defaultView.getComputedStyle(editor).width, 10);
+  const startHeight = parseInt(document.defaultView.getComputedStyle(editor).height, 10);
 
+  function doResize(e) {
+    const width = startWidth + e.clientX - startX;
+    const height = startHeight + e.clientY - startY;
+    editor.style.width = `${width}px`;
+    editor.style.height = `${height}px`;
 
-  </script>
+    // Ajustar o iframe para ocupar o espaço restante
+    const containers = document.querySelectorAll('.container');
+    const totalWidth = containers[0].clientWidth;
+    let usedWidth = 0;
+    containers[0].childNodes.forEach(child => {
+      if (child.nodeType === Node.ELEMENT_NODE && child !== editor) {
+        usedWidth += child.offsetWidth;
+      }
+    });
+    const iframe = document.getElementById('output');
+    iframe.style.width = `${totalWidth - usedWidth}px`;
+
+    // Ajuste de altura para o iframe
+    iframe.style.height = `${containers[1].clientHeight}px`;
+  }
+
+  function stopResize() {
+    document.documentElement.removeEventListener('mousemove', doResize);
+    document.documentElement.removeEventListener('mouseup', stopResize);
+  }
+
+  document.documentElement.addEventListener('mousemove', doResize);
+  document.documentElement.addEventListener('mouseup', stopResize);
+}
+
+// Adicionar evento de mousedown para iniciar o redimensionamento
+document.querySelectorAll('.resize-handle').forEach(handle => {
+  handle.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    resizeEditor(e, this.parentElement);
+  });
+});
+
+// Ajustar o layout inicial
+window.addEventListener('load', function() {
+  const iframe = document.getElementById('output');
+  iframe.style.height = `${document.querySelector('.container').clientHeight}px`;
+});
+// ... (código anterior) ...
+
+// Adicionar evento de duplo clique ao iframe
+document.getElementById('output').addEventListener('dblclick', function(evento) {
+  evento.preventDefault(); // Prevenir a ação padrão que pode interferir
+  let conteudoIframe = this.contentDocument.documentElement.outerHTML; // Obter o conteúdo HTML do iframe
+  let novaJanela = window.open('', '_blank');
+  novaJanela.document.write(conteudoIframe);
+  novaJanela.document.close();
+});  </script>
 </body>
 </html>
